@@ -36,7 +36,23 @@ def actualizar_estudiante(id: int, estudiante: Estudiante):
             return estudiante
     raise HTTPException(status_code=404, detail="Estudiante no encontrado")
 
-@app.delete()
-
+@app.delete("/estudiantes/{id}", summary="Eliminar estudiante")
+def eliminar_estudiante(id: int):
+    for i, est in enumerate(estudiantes):
+        if est.id == id:
+            estudiantes.pop(i)
+            return {"mensaje": "Estudiante eliminado"}
+    raise HTTPException(status_code=404, detail="Estudiante no encontrado")
 # ------------------ CRUD profesores ------------------------ #
 
+@app.get("/profesores", response_model=List[Profesor], summary="Listar profesores")
+def listar_profesores():
+    return profesores
+
+@app.post("/profesores", status_code=201, response_model=Profesor, summary="Crear profesor")
+def crear_profesor(profesor: Profesor):
+    for prof in profesores:
+        if prof.id == profesor.id:
+            raise HTTPException(status_code=400, detail="ID duplicado")
+    profesores.append(profesor)
+    return profesor
