@@ -56,3 +56,50 @@ def crear_profesor(profesor: Profesor):
             raise HTTPException(status_code=400, detail="ID duplicado")
     profesores.append(profesor)
     return profesor
+
+@app.put("/profesores/{id}", response_model=Profesor, summary="Actualizar profesor")
+def actualizar_Profesor(id: int, profesor: Profesor):
+    for i, pr in enumerate(profesores):
+        if pr.id == id:
+            profesores[i] = profesor
+            return profesor
+    raise HTTPException(status_code=404, detail="El profesor no fue encontrado")
+
+@app.delete("/profesores/{id}", summary="Eliminar Profesor")
+def eliminar_Profesor(id: int):
+    for i, pr in enumerate(profesores):
+        if pr.id == id:
+            profesores.pop(i)
+            return {"mensaje": "Profesor Eliminado"}
+    raise HTTPException(status_code=404, detail="Profesor no encontrado")
+
+# ------------------ CRUD Materia ------------------------ #
+
+@app.get("/materia", response_model=List[Materia], summary="Lista de materias")
+def listar_materia():
+    return materias
+
+@app.post("/materia", status_code=201, response_model=Materia, summary="Crear Materia")
+def crear_materia(materia: Materia):
+    for ma in materias:
+        if ma.id == materia.id:
+            raise HTTPException(status_code=400, detail="ID duplicado")
+    materias.append(materia)
+    return materia
+
+
+@app.put("/materia/{id}", response_model=Materia, summary="Materia estudiante")
+def actualizar_materia(id: int, materia: Materia):
+    for i, ma in enumerate(materias):
+        if ma.id == id:
+            materias[i] = materia
+            return materia
+    raise HTTPException(status_code=404, detail="La materia no fue encontrado")
+
+@app.delete("/materia/{id}", summary="Eliminar Materia")
+def eliminar_materia(id: int):
+    for i, ma in enumerate(materias):
+        if ma.id == id:
+            materias.pop(i)
+            return {"mensaje": "Materia Eliminada"}
+    raise HTTPException(status_code=404, detail="Materia no encontrada")
