@@ -1,4 +1,4 @@
-# 📚 API Escuela - Parcial 1
+#  API Escuela - Parcial 1
 
 ## 1. Título del Proyecto
 **API RESTful para la gestión de Estudiantes, Profesores y Materias**
@@ -9,9 +9,9 @@
 Este proyecto implementa una API RESTful básica utilizando **FastAPI** como parte del Parcial 1 de la materia *Aplicaciones y Servicios Web*.  
 
 La API permite gestionar la información de una escuela mediante operaciones **CRUD** sobre tres entidades principales:  
-- 👨‍🎓 Estudiantes  
-- 👩‍🏫 Profesores  
-- 📘 Materias  
+-  Estudiantes  
+-  Profesores  
+-  Materias  
 
 ### Problema que resuelve
 Permite registrar y consultar de manera sencilla los datos de los estudiantes, profesores y materias, además de realizar filtrados por materia, validaciones y manejar errores comunes (IDs duplicados, elementos no encontrados, etc.).
@@ -61,12 +61,12 @@ Copiar código
 uvicorn main:app --reload
 Acceder a la API en:
 
-Documentación Swagger: 👉 http://127.0.0.1:8000/docs
+Documentación Swagger:  http://127.0.0.1:8000/docs
 
-Documentación ReDoc: 👉 http://127.0.0.1:8000/redoc
+Documentación ReDoc:  http://127.0.0.1:8000/redoc
 
 6. Descripción de Endpoints
-👨‍🎓 Estudiantes
+ Estudiantes
 GET /estudiantes → Lista todos los estudiantes (soporta query param materia_id).
 
 Ejemplo: /estudiantes?materia_id=1
@@ -79,7 +79,7 @@ PUT /estudiantes/{id} → Actualiza un estudiante por ID.
 
 DELETE /estudiantes/{id} → Elimina un estudiante por ID.
 
-👩‍🏫 Profesores
+ Profesores
 GET /profesores → Lista todos los profesores.
 
 POST /profesores → Crea un nuevo profesor.
@@ -88,7 +88,7 @@ PUT /profesores/{id} → Actualiza un profesor por ID.
 
 DELETE /profesores/{id} → Elimina un profesor por ID.
 
-📘 Materias
+ Materias
 GET /materia → Lista todas las materias.
 
 POST /materia → Crea una nueva materia.
@@ -98,6 +98,6 @@ PUT /materia/{id} → Actualiza una materia por ID.
 DELETE /materia/{id} → Elimina una materia por ID.
 
 7. Autores / Integrantes del Grupo
-✨ Samuel Orozco Bedoya – CRUD de Estudiantes + parte de Profesores
+ Samuel Orozco Bedoya – CRUD de Estudiantes + parte de Profesores
 
-✨ Hector Daniel Sánchez Muñoz – CRUD de Materias + parte de Profesores
+ Hector Daniel Sánchez Muñoz – CRUD de Materias + parte de Profesores
