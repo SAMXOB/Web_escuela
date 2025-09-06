@@ -57,8 +57,7 @@ pip install fastapi uvicorn
 
 Clonar el repositorio:
 
-git clone https://github.com/TU_USUARIO/api_universitaria.git
-
+https://github.com/SAMXOB/Web_escuela.git
 
 Ejecutar el servidor con Uvicorn:
 
@@ -68,10 +67,10 @@ uvicorn main:app --reload
 Acceder a la API en:
 
 Documentación Swagger (interactiva):
-👉 http://127.0.0.1:8000/docs
+http://127.0.0.1:8000/docs
 
 Documentación ReDoc (alternativa):
-👉 http://127.0.0.1:8000/redoc
+http://127.0.0.1:8000/redoc
 
 6. Descripción de Endpoints
 Estudiantes
