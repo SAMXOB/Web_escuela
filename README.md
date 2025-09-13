@@ -106,7 +106,10 @@ PUT /materia/{id} → Actualiza una materia por ID.
 
 DELETE /materia/{id} → Elimina una materia por ID.
 
-7. Autores / Integrantes del Grupo
+[📄 Ver documentación en PDF](Respuesta%20API.pdf)
+
+
+8. Autores / Integrantes del Grupo
 
 Samuel Orozco Bedoya – CRUD de Estudiantes + parte de Profesores
 
