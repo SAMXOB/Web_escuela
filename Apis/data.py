@@ -1,4 +1,4 @@
-from models import Estudiante, Profesor, Materia
+from Apis.models import Estudiante, Profesor, Materia
 
 estudiantes = [
     Estudiante(id=1, nombre="Ana", apellido="Gomez", email="ana@example.com", materias=[1,2]),
