@@ -1,105 +1,162 @@
-from fastapi import FastAPI, HTTPException, Query
-from typing import List, Optional
-from models import Estudiante, Profesor, Materia
-from data import estudiantes, profesores, materias
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from typing import List
+from Apis.auth import create_access_token, verify_token
+from Apis.database import SessionLocal
+from Apis.models_sqlalchemy import Usuario, Estudiante, Profesor, Materia, Curso, Inscripcion
+from Apis.schemas import (
+    UsuarioCreate, UsuarioResponse,
+    EstudianteCreate, EstudianteResponse,
+    ProfesorCreate, ProfesorResponse,
+    MateriaCreate, MateriaResponse,
+    CursoCreate, CursoResponse,
+    InscripcionCreate, InscripcionResponse
+)
 
-app = FastAPI(title="API Escuela - Parcial 1")
+app = FastAPI(title="API Escuela - Proyecto Final")
 
-#------------------ CRUD Estudiantes -----------------#
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.get("/estudiantes", response_model=List[Estudiante], summary="Listar Estudiantes")
-def listar_estudiantes(materia_id: Optional[int] = Query(None, description="Filtrar por materia")):
-    if materia_id is not None:
-        return[est for est in estudiantes if materia_id in est.materias]
-    return estudiantes
+async def get_db():
+    async with SessionLocal() as session:
+        yield session
 
-@app.get("/estudiantes/{id}", response_model=Estudiante, summary="Obtener estudiante por ID")
-def obtener_estudiante(id: int):
-    for est in estudiantes:
-        if est.id == id:
-            return est
-    raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+# ------------------ LOGIN ------------------ #
+@app.post("/login", summary="Autenticación de usuario")
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
+    """
+    Autentica al usuario y devuelve un token JWT.
+    """
+    query = await db.execute(select(Usuario).where(Usuario.username == form_data.username))
+    user = query.scalars().first()
+    if user and user.password == form_data.password:
+        token = create_access_token(data={"sub": user.username})
+        return {"access_token": token, "token_type": "bearer"}
+    raise HTTPException(status_code=400, detail="Credenciales incorrectas")
 
-@app.post("/estudiantes", status_code=201, response_model=Estudiante, summary="Crear estudiante")
-def crear_estudiante(estudiante: Estudiante):
-    for est in estudiantes:
-        if est.id == estudiante.id:
-            raise HTTPException(status_code=400, detail="ID duplicado")
-    estudiantes.append(estudiante)
-    return estudiante
+# ------------------ CRUD USUARIOS ------------------ #
+@app.post("/usuarios", response_model=UsuarioResponse, summary="Crear usuario")
+async def crear_usuario(usuario: UsuarioCreate, db: AsyncSession = Depends(get_db)):
+    """
+    Crea un nuevo usuario en la base de datos.
+    """
+    nuevo = Usuario(username=usuario.username, email=usuario.email, password=usuario.password,
+                    creado_por="system", actualizado_por="system")
+    db.add(nuevo)
+    await db.commit()
+    await db.refresh(nuevo)
+    return nuevo
 
-@app.put("/estudiantes/{id}", response_model=Estudiante, summary="Actualizar estudiante")
-def actualizar_estudiante(id: int, estudiante: Estudiante):
-    for i, est in enumerate(estudiantes):
-        if est.id == id:
-            estudiantes[i] = estudiante
-            return estudiante
-    raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+# ------------------ CRUD ESTUDIANTES ------------------ #
+@app.post("/estudiantes", response_model=EstudianteResponse, summary="Crear estudiante")
+async def crear_estudiante(estudiante: EstudianteCreate, db: AsyncSession = Depends(get_db), username: str = Depends(verify_token)):
+    """
+    Crea un nuevo estudiante en la base de datos.
+    """
+    nuevo = Estudiante(nombre=estudiante.nombre, apellido=estudiante.apellido, email=estudiante.email,
+                       creado_por=username, actualizado_por=username)
+    db.add(nuevo)
+    await db.commit()
+    await db.refresh(nuevo)
+    return nuevo
 
-@app.delete("/estudiantes/{id}", summary="Eliminar estudiante")
-def eliminar_estudiante(id: int):
-    for i, est in enumerate(estudiantes):
-        if est.id == id:
-            estudiantes.pop(i)
-            return {"mensaje": "Estudiante eliminado"}
-    raise HTTPException(status_code=404, detail="Estudiante no encontrado")
-# ------------------ CRUD profesores ------------------------ #
+@app.get("/estudiantes", response_model=List[EstudianteResponse], summary="Listar estudiantes")
+async def listar_estudiantes(db: AsyncSession = Depends(get_db), username: str = Depends(verify_token)):
+    """
+    Devuelve la lista completa de estudiantes.
+    """
+    result = await db.execute(select(Estudiante))
+    return result.scalars().all()
 
-@app.get("/profesores", response_model=List[Profesor], summary="Listar profesores")
-def listar_profesores():
-    return profesores
+# ------------------ CRUD PROFESORES ------------------ #
+@app.post("/profesores", response_model=ProfesorResponse, summary="Crear profesor")
+async def crear_profesor(profesor: ProfesorCreate, db: AsyncSession = Depends(get_db), username: str = Depends(verify_token)):
+    """
+    Crea un nuevo profesor en la base de datos.
+    """
+    nuevo = Profesor(nombre=profesor.nombre, apellido=profesor.apellido, email=profesor.email,
+                     creado_por=username, actualizado_por=username)
+    db.add(nuevo)
+    await db.commit()
+    await db.refresh(nuevo)
+    return nuevo
 
-@app.post("/profesores", status_code=201, response_model=Profesor, summary="Crear profesor")
-def crear_profesor(profesor: Profesor):
-    for prof in profesores:
-        if prof.id == profesor.id:
-            raise HTTPException(status_code=400, detail="ID duplicado")
-    profesores.append(profesor)
-    return profesor
+@app.get("/profesores", response_model=List[ProfesorResponse], summary="Listar profesores")
+async def listar_profesores(db: AsyncSession = Depends(get_db), username: str = Depends(verify_token)):
+    """
+    Devuelve la lista completa de profesores.
+    """
+    result = await db.execute(select(Profesor))
+    return result.scalars().all()
 
-@app.put("/profesores/{id}", response_model=Profesor, summary="Actualizar profesor")
-def actualizar_Profesor(id: int, profesor: Profesor):
-    for i, pr in enumerate(profesores):
-        if pr.id == id:
-            profesores[i] = profesor
-            return profesor
-    raise HTTPException(status_code=404, detail="El profesor no fue encontrado")
+# ------------------ CRUD MATERIAS ------------------ #
+@app.post("/materias", response_model=MateriaResponse, summary="Crear materia")
+async def crear_materia(materia: MateriaCreate, db: AsyncSession = Depends(get_db), username: str = Depends(verify_token)):
+    """
+    Crea una nueva materia en la base de datos.
+    """
+    nueva = Materia(nombre=materia.nombre, creditos=materia.creditos, profesor_id=materia.profesor_id,
+                    creado_por=username, actualizado_por=username)
+    db.add(nueva)
+    await db.commit()
+    await db.refresh(nueva)
+    return nueva
 
-@app.delete("/profesores/{id}", summary="Eliminar Profesor")
-def eliminar_Profesor(id: int):
-    for i, pr in enumerate(profesores):
-        if pr.id == id:
-            profesores.pop(i)
-            return {"mensaje": "Profesor Eliminado"}
-    raise HTTPException(status_code=404, detail="Profesor no encontrado")
+@app.get("/materias", response_model=List[MateriaResponse], summary="Listar materias")
+async def listar_materias(db: AsyncSession = Depends(get_db), username: str = Depends(verify_token)):
+    """
+    Devuelve la lista completa de materias.
+    """
+    result = await db.execute(select(Materia))
+    return result.scalars().all()
 
-# ------------------ CRUD Materia ------------------------ #
+# ------------------ CRUD CURSOS ------------------ #
+@app.post("/cursos", response_model=CursoResponse, summary="Crear curso")
+async def crear_curso(curso: CursoCreate, db: AsyncSession = Depends(get_db), username: str = Depends(verify_token)):
+    """
+    Crea un nuevo curso en la base de datos.
+    """
+    nuevo = Curso(nombre=curso.nombre, materia_id=curso.materia_id,
+                  creado_por=username, actualizado_por=username)
+    db.add(nuevo)
+    await db.commit()
+    await db.refresh(nuevo)
+    return nuevo
 
-@app.get("/materia", response_model=List[Materia], summary="Lista de materias")
-def listar_materia():
-    return materias
+@app.get("/cursos", response_model=List[CursoResponse], summary="Listar cursos")
+async def listar_cursos(db: AsyncSession = Depends(get_db), username: str = Depends(verify_token)):
+    """
+    Devuelve la lista completa de cursos.
+    """
+    result = await db.execute(select(Curso))
+    return result.scalars().all()
 
-@app.post("/materia", status_code=201, response_model=Materia, summary="Crear Materia")
-def crear_materia(materia: Materia):
-    for ma in materias:
-        if ma.id == materia.id:
-            raise HTTPException(status_code=400, detail="ID duplicado")
-    materias.append(materia)
-    return materia
+# ------------------ CRUD INSCRIPCIONES ------------------ #
+@app.post("/inscripciones", response_model=InscripcionResponse, summary="Crear inscripción")
+async def crear_inscripcion(inscripcion: InscripcionCreate, db: AsyncSession = Depends(get_db), username: str = Depends(verify_token)):
+    """
+    Crea una nueva inscripción en la base de datos.
+    """
+    nueva = Inscripcion(estudiante_id=inscripcion.estudiante_id, curso_id=inscripcion.curso_id,
+                         creado_por=username, actualizado_por=username)
+    db.add(nueva)
+    await db.commit()
+    await db.refresh(nueva)
+    return nueva
 
-
-@app.put("/materia/{id}", response_model=Materia, summary="Materia estudiante")
-def actualizar_materia(id: int, materia: Materia):
-    for i, ma in enumerate(materias):
-        if ma.id == id:
-            materias[i] = materia
-            return materia
-    raise HTTPException(status_code=404, detail="La materia no fue encontrado")
-
-@app.delete("/materia/{id}", summary="Eliminar Materia")
-def eliminar_materia(id: int):
-    for i, ma in enumerate(materias):
-        if ma.id == id:
-            materias.pop(i)
-            return {"mensaje": "Materia Eliminada"}
-    raise HTTPException(status_code=404, detail="Materia no encontrada")
+@app.get("/inscripciones", response_model=List[InscripcionResponse], summary="Listar inscripciones")
+async def listar_inscripciones(db: AsyncSession = Depends(get_db), username: str = Depends(verify_token)):
+    """
+    Devuelve la lista completa de inscripciones.
+    """
+    result = await db.execute(select(Inscripcion))
+    return result.scalars().all()
