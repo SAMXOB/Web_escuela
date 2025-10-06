@@ -6,11 +6,15 @@ import uuid
 
 from Apis.database import Base
 
+
 class AuditMixin:
     creado_por = Column(String, nullable=False)
     actualizado_por = Column(String, nullable=False)
     fecha_creacion = Column(DateTime, default=datetime.utcnow)
-    fecha_actualizacion = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    fecha_actualizacion = Column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
 
 class Usuario(Base, AuditMixin):
     __tablename__ = "usuarios"
@@ -18,6 +22,7 @@ class Usuario(Base, AuditMixin):
     username = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
+
 
 class Estudiante(Base, AuditMixin):
     __tablename__ = "estudiantes"
@@ -28,6 +33,7 @@ class Estudiante(Base, AuditMixin):
 
     inscripciones = relationship("Inscripcion", back_populates="estudiante")
 
+
 class Profesor(Base, AuditMixin):
     __tablename__ = "profesores"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -36,6 +42,7 @@ class Profesor(Base, AuditMixin):
     email = Column(String, unique=True, nullable=False)
 
     materias = relationship("Materia", back_populates="profesor")
+
 
 class Materia(Base, AuditMixin):
     __tablename__ = "materias"
@@ -48,6 +55,7 @@ class Materia(Base, AuditMixin):
 
     cursos = relationship("Curso", back_populates="materia")
 
+
 class Curso(Base, AuditMixin):
     __tablename__ = "cursos"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -57,6 +65,7 @@ class Curso(Base, AuditMixin):
     materia = relationship("Materia", back_populates="cursos")
 
     inscripciones = relationship("Inscripcion", back_populates="curso")
+
 
 class Inscripcion(Base, AuditMixin):
     __tablename__ = "inscripciones"
