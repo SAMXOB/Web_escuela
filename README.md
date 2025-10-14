@@ -1,116 +1,99 @@
-API Escuela - Parcial 1
-1. Título del Proyecto
+# API Escuela
 
-API RESTful para la gestión de Estudiantes, Profesores y Materias
+## AUTORES
+- **Samuel Orozco Bedoya**  
+- **Héctor Daniel Sánchez Muñoz** 
+---
 
-2. Descripción General
+## TÍTULO DEL PROYECTO
+API RESTful para la gestión de Estudiantes, Profesores, Materias, Cursos, Inscripciones, Usuarios
 
-Este proyecto implementa una API RESTful básica utilizando FastAPI como parte del Parcial 1 de la materia Aplicaciones y Servicios Web.
+---
 
-La API permite gestionar la información de una escuela mediante operaciones CRUD sobre tres entidades principales:
+## DESCRIPCIÓN
+Este proyecto implementa una API RESTful orientada a la gestión académica de una escuela. Permite administrar Estudiantes, Profesores, Materias, Cursos, Inscripciones, Usuarios, ofreciendo operaciones CRUD completas, autenticación mediante JWT y conexión a base de datos relacional.  
+El objetivo es proporcionar un sistema escalable y seguro que facilite la administración de datos académicos y garantice la integridad de la información.
 
-Estudiantes
+---
 
-Profesores
+## ARQUITECTURA
+Se utiliza una arquitectura basada en capas con **FastAPI**, organizada para mantener el código limpio y escalable. Las principales capas son:
 
-Materias
+- **Apis/**: Contiene los endpoints organizados por entidad.
+- **Models/**: Define las clases que representan las tablas en la base de datos usando **SQLAlchemy**.
+- **Schemas/**: Clases Pydantic para validación y serialización de datos.
+- **Database/**: Configuración de la conexión a la base de datos y gestión de sesiones.
+- **Auth/**: Implementación de autenticación JWT.
+- **main.py**: Punto de entrada de la aplicación.
 
-Problema que resuelve
+---
 
-Permite registrar y consultar de manera sencilla los datos de los estudiantes, profesores y materias, además de realizar filtrados por materia, validaciones y manejar errores comunes (IDs duplicados, elementos no encontrados, etc.).
+## REQUISITOS DE INSTALACIÓN
+- **Python 3.10+**
+- Dependencias principales:
+  - fastapi
+  - uvicorn
+  - SQLAlchemy
+  - psycopg2 (o asyncpg si usas asincronía)
+  - python-jose (para JWT)
+  - passlib (para hashing de contraseñas)
+  - pydantic
 
-3. Arquitectura o Diseño
+Instalación:
 
-El proyecto está organizado de la siguiente manera:
+pip install -r requirements.txt
 
-Web_escuela/
-│
-├── main.py     # Punto de entrada, define la aplicación y los endpoints
-├── models.py   # Modelos de datos con Pydantic (Estudiante, Profesor, Materia)
-├── data.py     # "Base de datos" simulada en memoria (listas con objetos)
-└── README.md   # Documentación del proyecto
+CONFIGURACIÓN
+Crear un archivo .env con las variables necesarias:
+DATABASE_URL=postgresql+psycopg2://usuario:password@host:puerto/dbname
+SECRET_KEY=tu_clave_secreta
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
 
 
-Explicación breve:
-
-models.py: Define la estructura de las entidades (validaciones y tipos).
-
-data.py: Contiene listas que actúan como almacenamiento temporal.
-
-main.py: Implementa la lógica de negocio y expone los endpoints de la API.
-
-4. Requisitos de Instalación
-
-Python 3.9+ (recomendado 3.10 o superior)
-
-Dependencias principales:
-
-FastAPI
-
-Uvicorn
-
-Instalación de dependencias:
-
-pip install fastapi uvicorn
-
-5. Instrucciones de Ejecución
-
-Clonar el repositorio:
-
-https://github.com/SAMXOB/Web_escuela.git
-
-Ejecutar el servidor con Uvicorn:
-
+INSTRUCCIONES DE EJECUCIÓN
+Levantar el servidor:
 uvicorn main:app --reload
 
+Acceder a la documentación:
 
-Acceder a la API en:
+Swagger: http://localhost:8000/docs
+ReDoc: http://localhost:8000/redoc
 
-Documentación Swagger (interactiva):
-http://127.0.0.1:8000/docs
 
-Documentación ReDoc (alternativa):
-http://127.0.0.1:8000/redoc
+DESCRIPCIÓN DE ENDPOINTS
+🔐 Autenticación
 
-6. Descripción de Endpoints
-Estudiantes
+POST /auth/login → Genera token JWT para autenticación.
+POST /auth/register → Registra un nuevo usuario.
 
-GET /estudiantes → Lista todos los estudiantes (soporta query param materia_id).
-Ejemplo: /estudiantes?materia_id=1
+👩‍🎓 Estudiantes
 
+GET /estudiantes → Lista todos los estudiantes (filtrado opcional por materia).
 GET /estudiantes/{id} → Obtiene un estudiante por ID.
+POST /estudiantes → Crea un nuevo estudiante.
+PUT /estudiantes/{id} → Actualiza un estudiante.
+DELETE /estudiantes/{id} → Elimina un estudiante.
 
-POST /estudiantes → Crea un nuevo estudiante (JSON en body).
+👨‍🏫 Profesores
 
-PUT /estudiantes/{id} → Actualiza un estudiante por ID.
+CRUD completo similar a estudiantes.
 
-DELETE /estudiantes/{id} → Elimina un estudiante por ID.
+📚 Materias
 
-Profesores
-
-GET /profesores → Lista todos los profesores.
-
-POST /profesores → Crea un nuevo profesor.
-
-PUT /profesores/{id} → Actualiza un profesor por ID.
-
-DELETE /profesores/{id} → Elimina un profesor por ID.
-
-Materias
-
-GET /materia → Lista todas las materias.
-
-POST /materia → Crea una nueva materia.
-
-PUT /materia/{id} → Actualiza una materia por ID.
-
-DELETE /materia/{id} → Elimina una materia por ID.
-
-[📄 Ver documentación en PDF](Respuesta%20API.pdf)
+CRUD completo similar a estudiantes.
 
 
-8. Autores / Integrantes del Grupo
+DOCUMENTACIÓN EXTRA
 
-Samuel Orozco Bedoya – CRUD de Estudiantes + parte de Profesores
+Swagger UI
+ReDoc
 
-Héctor Daniel Sánchez Muñoz – CRUD de Materias + parte de Profesores
+
+NOTAS
+Este proyecto sigue buenas prácticas de desarrollo, incluyendo:
+
+Manejo de errores.
+Validación de datos.
+Autenticación segura.
+Arquitectura modular.
