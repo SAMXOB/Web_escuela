@@ -1,116 +1,31 @@
-API Escuela - Parcial 1
-1. Título del Proyecto
+# Web Escuela — API
 
-API RESTful para la gestión de Estudiantes, Profesores y Materias
+API REST para la gestión de estudiantes, profesores y materias. Fue desarrollada como parte de la asignatura Aplicaciones y Servicios Web.
 
-2. Descripción General
+## Funcionalidades
 
-Este proyecto implementa una API RESTful básica utilizando FastAPI como parte del Parcial 1 de la materia Aplicaciones y Servicios Web.
+- Operaciones CRUD para estudiantes, profesores y materias.
+- Validación de datos mediante modelos Pydantic.
+- Filtrado por materia.
+- Manejo de errores comunes, como identificadores duplicados o recursos inexistentes.
 
-La API permite gestionar la información de una escuela mediante operaciones CRUD sobre tres entidades principales:
+## Tecnologías
 
-Estudiantes
+- Python 3.9 o superior
+- FastAPI
+- Uvicorn
+- Pydantic
 
-Profesores
+## Estructura
 
-Materias
-
-Problema que resuelve
-
-Permite registrar y consultar de manera sencilla los datos de los estudiantes, profesores y materias, además de realizar filtrados por materia, validaciones y manejar errores comunes (IDs duplicados, elementos no encontrados, etc.).
-
-3. Arquitectura o Diseño
-
-El proyecto está organizado de la siguiente manera:
-
+```text
 Web_escuela/
-│
-├── main.py     # Punto de entrada, define la aplicación y los endpoints
-├── models.py   # Modelos de datos con Pydantic (Estudiante, Profesor, Materia)
-├── data.py     # "Base de datos" simulada en memoria (listas con objetos)
-└── README.md   # Documentación del proyecto
+├── main.py     # Aplicación y endpoints
+├── models.py   # Modelos y validaciones
+├── data.py     # Almacenamiento temporal en memoria
+└── README.md
+```
 
+## Proyecto relacionado
 
-Explicación breve:
-
-models.py: Define la estructura de las entidades (validaciones y tipos).
-
-data.py: Contiene listas que actúan como almacenamiento temporal.
-
-main.py: Implementa la lógica de negocio y expone los endpoints de la API.
-
-4. Requisitos de Instalación
-
-Python 3.9+ (recomendado 3.10 o superior)
-
-Dependencias principales:
-
-FastAPI
-
-Uvicorn
-
-Instalación de dependencias:
-
-pip install fastapi uvicorn
-
-5. Instrucciones de Ejecución
-
-Clonar el repositorio:
-
-https://github.com/SAMXOB/Web_escuela.git
-
-Ejecutar el servidor con Uvicorn:
-
-uvicorn main:app --reload
-
-
-Acceder a la API en:
-
-Documentación Swagger (interactiva):
-http://127.0.0.1:8000/docs
-
-Documentación ReDoc (alternativa):
-http://127.0.0.1:8000/redoc
-
-6. Descripción de Endpoints
-Estudiantes
-
-GET /estudiantes → Lista todos los estudiantes (soporta query param materia_id).
-Ejemplo: /estudiantes?materia_id=1
-
-GET /estudiantes/{id} → Obtiene un estudiante por ID.
-
-POST /estudiantes → Crea un nuevo estudiante (JSON en body).
-
-PUT /estudiantes/{id} → Actualiza un estudiante por ID.
-
-DELETE /estudiantes/{id} → Elimina un estudiante por ID.
-
-Profesores
-
-GET /profesores → Lista todos los profesores.
-
-POST /profesores → Crea un nuevo profesor.
-
-PUT /profesores/{id} → Actualiza un profesor por ID.
-
-DELETE /profesores/{id} → Elimina un profesor por ID.
-
-Materias
-
-GET /materia → Lista todas las materias.
-
-POST /materia → Crea una nueva materia.
-
-PUT /materia/{id} → Actualiza una materia por ID.
-
-DELETE /materia/{id} → Elimina una materia por ID.
-
-[📄 Ver documentación en PDF](Respuesta%20API.pdf)
-
-
-8. Autores / Integrantes del Grupo
-
-Samuel Orozco Bedoya – CRUD de Estudiantes + parte de Profesores
-
-Héctor Daniel Sánchez Muñoz – CRUD de Materias + parte de Profesores
+- Frontend: [WebEscuelaFrontEnd](https://github.com/SAMXOB/WebEscuelaFrontEnd)
